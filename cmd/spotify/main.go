@@ -39,6 +39,8 @@ func main() {
 	rootCmd.AddCommand(pauseCmd)
 	rootCmd.AddCommand(statusCmd)
 
+	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
+
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
 	}

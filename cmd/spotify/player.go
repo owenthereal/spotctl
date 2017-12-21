@@ -9,63 +9,116 @@ import (
 	"github.com/zmb3/spotify"
 )
 
+var playCmdFlagType string
+
 var playCmd = &cobra.Command{
-	Use:   "play",
-	Short: "Resumes playback where Spotify last left off.",
+	Use:   "play [name]",
+	Short: "Resume playback or play a song, album, artist or playlist by name.",
+	Long:  `Resume playback or find a song, album, artist or playlist by name and play it. The search type is specified with --type.`,
 	RunE:  play,
 }
 
 var pauseCmd = &cobra.Command{
 	Use:   "pause",
-	Short: "Pauses Spotify playback.",
+	Short: "Pause Spotify playback.",
 	RunE:  pause,
 }
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "Shows the current player status.",
+	Short: "Show the current player status.",
 	RunE:  status,
 }
 
 func play(cmd *cobra.Command, args []string) error {
-	var opt *spotify.PlayOptions
+	var (
+		opt *spotify.PlayOptions
+		err error
+	)
 
 	if len(args) > 0 {
-		// if args start with a spotify ID, play it directly, otherwise search for tracks
+		// if args start with a spotify ID, play it directly, otherwise search for songs
 		if strings.Contains(args[0], "spotify:") {
-			arg := args[0] // only play for the first arg
-
-			var (
-				uris    []spotify.URI
-				context *spotify.URI
-			)
-
-			if strings.Contains(arg, "spotify:track") {
-				uris = append(uris, spotify.URI(arg))
-			} else {
-				uri := spotify.URI(arg)
-				context = &uri
-			}
-
-			opt = &spotify.PlayOptions{
-				PlaybackContext: context,
-				URIs:            uris,
-			}
+			opt = playByID(args[0]) // only play the first id
 		} else {
-			result, err := client.Search(strings.Join(args, " "), spotify.SearchTypeTrack)
+			opt, err = searchToPlay(strings.Join(args, " "), playCmdFlagType)
 			if err != nil {
 				return err
-			}
-
-			if result.Tracks != nil && len(result.Tracks.Tracks) > 0 {
-				opt = &spotify.PlayOptions{
-					URIs: []spotify.URI{spotify.URI(result.Tracks.Tracks[0].URI)},
-				}
 			}
 		}
 	}
 
 	return client.PlayOpt(opt)
+}
+
+func playByID(id string) *spotify.PlayOptions {
+	var (
+		uris    []spotify.URI
+		context *spotify.URI
+	)
+
+	if strings.Contains(id, "spotify:track") {
+		uris = append(uris, spotify.URI(id))
+	} else {
+		uri := spotify.URI(id)
+		context = &uri
+	}
+
+	return &spotify.PlayOptions{
+		PlaybackContext: context,
+		URIs:            uris,
+	}
+}
+
+func searchToPlay(query, t string) (*spotify.PlayOptions, error) {
+	var st spotify.SearchType
+	switch t {
+	case "track":
+		st = spotify.SearchTypeTrack
+	case "album":
+		st = spotify.SearchTypeAlbum
+	case "artist":
+		st = spotify.SearchTypeArtist
+	case "playlist":
+		st = spotify.SearchTypePlaylist
+	default:
+		return nil, fmt.Errorf("unsupported search type %s", t)
+	}
+
+	result, err := client.Search(query, st)
+	if err != nil {
+		return nil, err
+	}
+
+	var opt *spotify.PlayOptions
+	switch t {
+	case "track":
+		if result.Tracks != nil && len(result.Tracks.Tracks) > 0 {
+			opt = &spotify.PlayOptions{
+				URIs: []spotify.URI{result.Tracks.Tracks[0].URI},
+			}
+		}
+	case "album":
+		if result.Albums != nil && len(result.Albums.Albums) > 0 {
+			opt = &spotify.PlayOptions{
+				PlaybackContext: &result.Albums.Albums[0].URI,
+			}
+		}
+	case "artist":
+		if result.Artists != nil && len(result.Artists.Artists) > 0 {
+			opt = &spotify.PlayOptions{
+				PlaybackContext: &result.Artists.Artists[0].URI,
+			}
+		}
+	case "playlist":
+		if result.Playlists != nil && len(result.Playlists.Playlists) > 0 {
+			opt = &spotify.PlayOptions{
+				PlaybackContext: &result.Playlists.Playlists[0].URI,
+			}
+		}
+	}
+
+	return opt, nil
 }
 
 func pause(cmd *cobra.Command, args []string) error {
