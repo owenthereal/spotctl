@@ -13,8 +13,8 @@ var playCmdFlagType string
 
 var playCmd = &cobra.Command{
 	Use:   "play [name]",
-	Short: "Resume playback or play a song, album, artist or playlist by name.",
-	Long:  `Resume playback or find a song, album, artist or playlist by name and play it. The search type is specified with --type.`,
+	Short: "Resume playback or play a track, album, artist or playlist by name.",
+	Long:  `Resume playback or find a track, album, artist or playlist by name and play it. The search type can be specified with --type.`,
 	RunE:  play,
 }
 

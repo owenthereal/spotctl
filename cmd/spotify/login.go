@@ -25,7 +25,7 @@ func init() {
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "login with your Spotify credentials",
+	Short: "Login with your Spotify credentials",
 	RunE:  login,
 }
 
