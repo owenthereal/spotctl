@@ -96,59 +96,59 @@ func player(cmd *cobra.Command, args []string) error {
 	ui.Handle("/sys/kbd/p", func(ui.Event) {
 		state, err := client.PlayerState()
 		if err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 		if state.Playing {
 			if err := pause(pauseCmd, []string{}); err != nil {
-				log.Fatal(err)
+				quitAndFatal(err)
 			}
 		} else {
 			if err := play(playCmd, []string{}); err != nil {
-				log.Fatal(err)
+				quitAndFatal(err)
 			}
 		}
 	})
 
 	ui.Handle("/sys/kbd/l", func(ui.Event) {
 		if err := next(nextCmd, []string{}); err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 	})
 
 	ui.Handle("/sys/kbd/h", func(ui.Event) {
 		if err := prev(prevCmd, []string{}); err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 	})
 
 	ui.Handle("/sys/kbd/j", func(ui.Event) {
 		if err := vol(volCmd, []string{"up"}); err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 	})
 
 	ui.Handle("/sys/kbd/k", func(ui.Event) {
 		if err := vol(volCmd, []string{"down"}); err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 	})
 
 	ui.Handle("/sys/kbd/s", func(ui.Event) {
 		if err := shuffle(shuffleCmd, []string{}); err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 	})
 
 	ui.Handle("/sys/kbd/r", func(ui.Event) {
 		if err := repeat(repeatCmd, []string{}); err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 	})
 
 	ui.Handle("/timer/1s", func(e ui.Event) {
 		state, err := client.PlayerState()
 		if err != nil {
-			log.Fatal(err)
+			quitAndFatal(err)
 		}
 
 		volGauge.Percent = state.Device.Volume
@@ -194,6 +194,12 @@ func player(cmd *cobra.Command, args []string) error {
 	ui.Loop()
 
 	return nil
+}
+
+func quitAndFatal(err error) {
+	ui.StopLoop()
+	ui.Close()
+	log.Fatal(err)
 }
 
 func durationToStr(d int) string {
