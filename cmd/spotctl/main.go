@@ -49,6 +49,7 @@ func ver(cmd *cobra.Command, args []string) {
 
 func main() {
 	rootCmd.AddCommand(loginCmd)
+	rootCmd.AddCommand(logoutCmd)
 	rootCmd.AddCommand(playCmd)
 	rootCmd.AddCommand(pauseCmd)
 	rootCmd.AddCommand(nextCmd)
@@ -82,8 +83,8 @@ func preRootCmd(cmd *cobra.Command, args []string) {
 	)
 	auth.SetAuthInfo(spotifyClientID, spotifyClientSecret)
 
-	// skip reading token or login if this is a login command
-	if cmd.Use == "login" {
+	// skip reading token if this is a login/logout command
+	if cmd.Use == "login" || cmd.Use == "logout" {
 		return
 	}
 
@@ -108,8 +109,8 @@ func preRootCmd(cmd *cobra.Command, args []string) {
 }
 
 func postRootCmd(cmd *cobra.Command, args []string) {
-	// skip reading token or login if this is a login command
-	if cmd.Use == "login" {
+	// skip reading token if this is a login/logout command
+	if cmd.Use == "login" || cmd.Use == "logout" {
 		return
 	}
 

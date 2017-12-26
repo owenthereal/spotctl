@@ -13,38 +13,39 @@ var playCmdFlagType string
 
 var playCmd = &cobra.Command{
 	Use:   "play [name]",
-	Short: "Resume playback or play a track, album, artist or playlist by name.",
+	Short: "Resume playback or play a track, album, artist or playlist by name",
 	Long:  `Resume playback or find a track, album, artist or playlist by name and play it. The search type can be specified with --type.`,
 	RunE:  play,
 }
 
 var pauseCmd = &cobra.Command{
 	Use:   "pause",
-	Short: "Pause Spotify playback.",
+	Short: "Pause Spotify playback",
 	RunE:  pause,
 }
 
 var nextCmd = &cobra.Command{
 	Use:   "next",
-	Short: "Skip to the next song.",
+	Short: "Skip to the next track",
 	RunE:  next,
 }
 
 var prevCmd = &cobra.Command{
 	Use:   "prev",
-	Short: "Return to the previous song.",
+	Short: "Return to the previous track",
 	RunE:  prev,
 }
 
 var volCmd = &cobra.Command{
 	Use:   "vol [up|down|amount]",
-	Short: "Set the volume to an amount between 0 and 100. If up is provided, increase the volume by 10%. If Down is provided, decrease the volume by 10%.",
+	Short: "Set or return volume percentage",
+	Long:  `Set volume percentage to an amount between 0 and 100. If arg is up, volume is increased by 10%. If arg is down, volume is decreased by 10%. If no arg is provided, current volume percentage is returned.`,
 	RunE:  vol,
 }
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "Show the current player status.",
+	Short: "Show the current player status",
 	RunE:  status,
 }
 

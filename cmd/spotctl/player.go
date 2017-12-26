@@ -12,7 +12,7 @@ import (
 
 var playerCmd = &cobra.Command{
 	Use:   "player",
-	Short: "Show the player panel.",
+	Short: "Show the live player panel",
 	RunE:  player,
 }
 
@@ -69,7 +69,7 @@ func player(cmd *cobra.Command, args []string) error {
 	volGauge.BarColor = ui.ColorBlue
 	volGauge.PaddingBottom = 1
 
-	helpLabel := ui.NewPar("Press q - quit, p - play/pause, l/h - next/previous track, j/k - vol up/down, s - shuffle, r - repeat")
+	helpLabel := ui.NewPar("Press q - quit, p - play/pause, l/h - next/previous track, j/k - vol up/down, s - shuffle, r - repeat.")
 	helpLabel.X = 0
 	helpLabel.Y = 10
 	helpLabel.Width = 40

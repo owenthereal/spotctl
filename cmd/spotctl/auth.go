@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/zmb3/spotify"
@@ -15,6 +16,12 @@ import (
 var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Login with your Spotify credentials",
+	RunE:  login,
+}
+
+var logoutCmd = &cobra.Command{
+	Use:   "logout",
+	Short: "Clear your local Spotify credentials",
 	RunE:  login,
 }
 
@@ -38,6 +45,11 @@ func login(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	return nil
+}
+
+func logout(cmd *cobra.Command, args []string) error {
+	os.Remove(tokenPath)
 	return nil
 }
 
