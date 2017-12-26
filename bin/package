@@ -1,0 +1,37 @@
+#!/bin/bash -e
+
+compress() {
+  cd release
+
+  for dir in */
+  do
+    base=$(basename "$dir")
+    #cp ../README.md ../LICENSE $dir
+
+    echo "Compressing $base"
+
+    tar -zcf "${base}.tar.gz" "$dir"
+    rm -rf $dir
+  done
+
+  echo
+
+  ls -all
+}
+
+OSARCH="darwin/amd64 linux/amd64 linux/386 windows/amd64 windows/386"
+VER="$(git rev-parse HEAD)"
+
+echo "Packaging ccat $VER"
+echo
+
+go get -u github.com/mitchellh/gox
+
+cd cmd/spotctl && \
+gox -osarch="$OSARCH" \
+  -ldflags "-X main.spotifyClientID=$SPOTIFY_CLIENT_ID -X main.spotifyClientSecret=$SPOTIFY_CLIENT_SECRET -X main.version=$VER" \
+  -output="../../release/{{.OS}}-{{.Arch}}-$VER/{{.Dir}}" \
+&& cd -
+echo
+
+compress
