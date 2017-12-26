@@ -8,6 +8,16 @@
 
 ## Installation
 
+## Homebrew
+
+If you're on a Mac, you can install with [Homebrew](https://brew.sh/) like:
+
+```
+brew install https://raw.githubusercontent.com/jingweno/spotctl/master/Formula/spotctl.rb
+```
+
+## Download
+
 You can download the latest release for your operating system [here](https://github.com/jingweno/spotctl/releases).
 
 ## Manual Instllation
