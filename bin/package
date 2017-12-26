@@ -1,5 +1,17 @@
 #!/bin/bash -e
 
+version() {
+  ver="$(git describe --tags HEAD 2>/dev/null || true)"
+
+  if [ -z "$ver" ]; then
+    ver="$(grep version version.go | head -1 | cut -d '"' -f2)"
+    sha="$(git rev-parse --short HEAD 2>/dev/null || true)"
+    [ -z "$sha" ] || ver="${ver}-g${sha}"
+  fi
+
+  echo "${ver#v}"
+}
+
 compress() {
   cd release
 
@@ -20,18 +32,18 @@ compress() {
 }
 
 OSARCH="darwin/amd64 linux/amd64 linux/386 windows/amd64 windows/386"
-VER="$(git rev-parse HEAD)"
 
-echo "Packaging ccat $VER"
-echo
+cd cmd/spotctl
+echo "Packaging spotctl $(version)"
 
 go get -u github.com/mitchellh/gox
 
-cd cmd/spotctl && \
 gox -osarch="$OSARCH" \
-  -ldflags "-X main.spotifyClientID=$SPOTIFY_CLIENT_ID -X main.spotifyClientSecret=$SPOTIFY_CLIENT_SECRET -X main.version=$VER" \
-  -output="../../release/{{.OS}}-{{.Arch}}-$VER/{{.Dir}}" \
-&& cd -
+  -ldflags "-X main.spotifyClientID=$SPOTIFY_CLIENT_ID -X main.spotifyClientSecret=$SPOTIFY_CLIENT_SECRET -X main.version=$(version)" \
+  -output="../../release/{{.OS}}-{{.Arch}}-$(version)/{{.Dir}}"
+
 echo
+
+cd -
 
 compress

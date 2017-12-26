@@ -1,5 +1,5 @@
 #!/bin/bash -e
 
 go build -o build/spotctl \
-  -ldflags "-X main.spotifyClientID=$SPOTIFY_CLIENT_ID -X main.spotifyClientSecret=$SPOTIFY_CLIENT_SECRET -X main.version=$(git rev-parse HEAD)" \
+  -ldflags "-X main.spotifyClientID=$SPOTIFY_CLIENT_ID -X main.spotifyClientSecret=$SPOTIFY_CLIENT_SECRET" \
   ./cmd/spotctl/...

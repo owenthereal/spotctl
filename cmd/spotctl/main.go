@@ -21,7 +21,6 @@ const (
 var (
 	spotifyClientID     string
 	spotifyClientSecret string
-	version             = "dev"
 )
 
 var (
