@@ -4,13 +4,15 @@
 
 ## Demo
 
+One of the highlights is that `spotctl player` shows a real-time Spotify player that allows you to control it, right in your terminal!
+
 [![asciicast](https://asciinema.org/a/154262.png)](https://asciinema.org/a/154262)
 
 ## Installation
 
 ## Homebrew
 
-If you're on a Mac, you can install with [Homebrew](https://brew.sh/) like:
+If you're on a Mac, you can install with [Homebrew](https://brew.sh/):
 
 ```
 brew install https://raw.githubusercontent.com/jingweno/spotctl/master/Formula/spotctl.rb
