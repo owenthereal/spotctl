@@ -6,7 +6,7 @@ compress() {
   for dir in */
   do
     base=$(basename "$dir")
-    #cp ../README.md ../LICENSE $dir
+    cp ../README.md ../LICENSE $dir
 
     echo "Compressing $base"
 
