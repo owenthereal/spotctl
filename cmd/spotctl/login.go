@@ -6,22 +6,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os/user"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
 )
-
-func init() {
-	usr, err := user.Current()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tokenPath = filepath.Join(usr.HomeDir, ".spotify")
-}
 
 var loginCmd = &cobra.Command{
 	Use:   "login",

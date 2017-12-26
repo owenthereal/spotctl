@@ -22,13 +22,17 @@
 
 
 [[constraint]]
-  name = "github.com/spf13/cobra"
-  branch = "master"
+  name = "github.com/maruel/ut"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/mattn/go-colorable"
+  version = "0.0.9"
+
+[[constraint]]
+  name = "github.com/mattn/go-isatty"
+  version = "0.0.2"
 
 [[constraint]]
   branch = "master"
-  name = "github.com/zmb3/spotify"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/gizak/termui"
+  name = "github.com/mgutz/ansi"

@@ -3,6 +3,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/gizak/termui"
+  packages = ["."]
+  revision = "72304ddb9b4e9838426a021aad64a5a860e98324"
+
+[[projects]]
+  branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["proto"]
   revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
@@ -12,6 +18,30 @@
   packages = ["."]
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
   version = "v1.0"
+
+[[projects]]
+  name = "github.com/maruel/panicparse"
+  packages = ["stack"]
+  revision = "766956aceb8ff49664065ae50bef0ae8a0a83ec4"
+  version = "v1.0.2"
+
+[[projects]]
+  name = "github.com/mattn/go-runewidth"
+  packages = ["."]
+  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
+  version = "v0.0.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/mitchellh/go-wordwrap"
+  packages = ["."]
+  revision = "ad45545899c7b13c020ea92b2072220eefad42b8"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/nsf/termbox-go"
+  packages = ["."]
+  revision = "aa4a75b1c20a2b03751b1a9f7e41d58bd6f71c43"
 
 [[projects]]
   branch = "master"
@@ -52,6 +82,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d50e20b9d610e1c002512f23f73f5b3cfaf9463d0423bd7563be62f779a99e35"
+  inputs-digest = "0720d9d92c879913d220a1442b2e7dd1ebcc7a959ee1f519c373752cb63db745"
   solver-name = "gps-cdcl"
   solver-version = 1

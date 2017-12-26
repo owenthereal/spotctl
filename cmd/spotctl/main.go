@@ -27,7 +27,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:               "spotify",
+	Use:               "spotctl",
 	Short:             "A command-line interface to Spotify.",
 	PersistentPreRun:  preRootCmd,
 	PersistentPostRun: postRootCmd,
@@ -37,7 +37,13 @@ func main() {
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(playCmd)
 	rootCmd.AddCommand(pauseCmd)
+	rootCmd.AddCommand(nextCmd)
+	rootCmd.AddCommand(prevCmd)
+	rootCmd.AddCommand(volCmd)
+	rootCmd.AddCommand(shuffleCmd)
+	rootCmd.AddCommand(repeatCmd)
 	rootCmd.AddCommand(statusCmd)
+	rootCmd.AddCommand(playerCmd)
 
 	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
 
@@ -52,7 +58,7 @@ func preRootCmd(cmd *cobra.Command, args []string) {
 		log.Fatal(err)
 	}
 
-	tokenPath = filepath.Join(usr.HomeDir, ".spotify")
+	tokenPath = filepath.Join(usr.HomeDir, ".spotctl")
 	auth = spotify.NewAuthenticator(
 		redirectURI,
 		spotify.ScopeUserReadCurrentlyPlaying,

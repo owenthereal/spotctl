@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/zmb3/spotify"
@@ -24,10 +24,69 @@ var pauseCmd = &cobra.Command{
 	RunE:  pause,
 }
 
+var nextCmd = &cobra.Command{
+	Use:   "next",
+	Short: "Skip to the next song.",
+	RunE:  next,
+}
+
+var prevCmd = &cobra.Command{
+	Use:   "prev",
+	Short: "Return to the previous song.",
+	RunE:  prev,
+}
+
+var volCmd = &cobra.Command{
+	Use:   "vol [up|down|amount]",
+	Short: "Set the volume to an amount between 0 and 100. If up is provided, increase the volume by 10%. If Down is provided, decrease the volume by 10%.",
+	RunE:  vol,
+}
+
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show the current player status.",
 	RunE:  status,
+}
+
+var shuffleCmd = &cobra.Command{
+	Use:   "shuffle",
+	Short: "Toggle shuffle playback mode",
+	RunE:  shuffle,
+}
+
+var repeatCmd = &cobra.Command{
+	Use:   "repeat",
+	Short: "Toggle repeat playback mode",
+	RunE:  repeat,
+}
+
+func shuffle(cmd *cobra.Command, args []string) error {
+	state, err := client.PlayerState()
+	if err != nil {
+		return err
+	}
+
+	return client.Shuffle(!state.ShuffleState)
+}
+
+func repeat(cmd *cobra.Command, args []string) error {
+	state, err := client.PlayerState()
+	if err != nil {
+		return err
+	}
+
+	var repeat string
+	if state.RepeatState == "off" {
+		repeat = "track"
+	} else if state.RepeatState == "track" {
+		repeat = "context"
+	} else if state.RepeatState == "context" {
+		repeat = "off"
+	} else {
+		return fmt.Errorf("unsupported repeat state %s", state.RepeatState)
+	}
+
+	return client.Repeat(repeat)
 }
 
 func play(cmd *cobra.Command, args []string) error {
@@ -49,6 +108,41 @@ func play(cmd *cobra.Command, args []string) error {
 	}
 
 	return client.PlayOpt(opt)
+}
+
+func vol(cmd *cobra.Command, args []string) error {
+	state, err := client.PlayerState()
+	if err != nil {
+		return err
+	}
+
+	if len(args) == 0 {
+		fmt.Printf("Current volume is %d%%.\n", state.Device.Volume)
+		return nil
+	}
+
+	var currVolume int
+	switch vol := args[0]; vol {
+	case "up":
+		currVolume = state.Device.Volume + 10
+	case "down":
+		currVolume = state.Device.Volume - 10
+	default:
+		currVolume, err = strconv.Atoi(vol)
+		if err != nil {
+			return err
+		}
+	}
+
+	if currVolume < 0 {
+		currVolume = 0
+	}
+
+	if currVolume > 100 {
+		currVolume = 100
+	}
+
+	return client.Volume(currVolume)
 }
 
 func playByID(id string) *spotify.PlayOptions {
@@ -125,6 +219,14 @@ func pause(cmd *cobra.Command, args []string) error {
 	return client.Pause()
 }
 
+func next(cmd *cobra.Command, args []string) error {
+	return client.Next()
+}
+
+func prev(cmd *cobra.Command, args []string) error {
+	return client.Previous()
+}
+
 func status(cmd *cobra.Command, args []string) error {
 	state, err := client.PlayerState()
 	if err != nil {
@@ -141,14 +243,10 @@ func status(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Artist: %s\n", strings.Join(artists, ", "))
 		fmt.Printf("Album: %s\n", state.Item.Album.Name)
 		fmt.Printf("Track: %s\n", state.Item.Name)
-		fmt.Printf("Position: %s / %s\n", formatDurationInMillisecond(state.Progress), formatDurationInMillisecond(state.Item.Duration))
+		fmt.Printf("Position: %s / %s\n", durationToStr(state.Progress), durationToStr(state.Item.Duration))
 	} else {
 		fmt.Println("Spotify is currently paused.")
 	}
 
 	return nil
-}
-
-func formatDurationInMillisecond(d int) time.Duration {
-	return (time.Duration(d) * time.Millisecond).Round(time.Second)
 }
