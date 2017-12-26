@@ -2,6 +2,10 @@
 
 `spotctl` is command-line interface to control Spotify from your favorite terminal.
 
+## Demo
+
+[![asciicast](https://asciinema.org/a/154262.png)](https://asciinema.org/a/154262)
+
 ## Installation
 
 You can download the latest release for your operating system [here](https://github.com/jingweno/spotctl/releases).
