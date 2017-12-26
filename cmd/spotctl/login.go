@@ -27,7 +27,7 @@ func login(cmd *cobra.Command, args []string) error {
 	ch := make(chan *oauth2.Token)
 
 	http.Handle("/callback", &authHandler{state: state, ch: ch, auth: auth})
-	go http.ListenAndServe("localhost:8080", nil)
+	go http.ListenAndServe("localhost:10028", nil)
 
 	url := auth.AuthURL(state)
 	fmt.Println("Please log in to Spotify by visiting the following page in your browser:", url)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,9 +15,13 @@ import (
 )
 
 const (
-	redirectURI  = "http://localhost:8080/callback"
-	clientID     = "047627e6515f464a932fb6c4c6a1a446"
-	clientSecret = "ac19b6260f7741dc800d8aac867871d4"
+	redirectURI = "http://localhost:10028/callback"
+)
+
+var (
+	spotifyClientID     string
+	spotifyClientSecret string
+	version             string
 )
 
 var (
@@ -33,6 +38,16 @@ var rootCmd = &cobra.Command{
 	PersistentPostRun: postRootCmd,
 }
 
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Show version.",
+	Run:   ver,
+}
+
+func ver(cmd *cobra.Command, args []string) {
+	fmt.Println(version)
+}
+
 func main() {
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(playCmd)
@@ -44,6 +59,7 @@ func main() {
 	rootCmd.AddCommand(repeatCmd)
 	rootCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(playerCmd)
+	rootCmd.AddCommand(versionCmd)
 
 	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
 
@@ -65,7 +81,7 @@ func preRootCmd(cmd *cobra.Command, args []string) {
 		spotify.ScopeUserReadPlaybackState,
 		spotify.ScopeUserModifyPlaybackState,
 	)
-	auth.SetAuthInfo(clientID, clientSecret)
+	auth.SetAuthInfo(spotifyClientID, spotifyClientSecret)
 
 	// skip reading token or login if this is a login command
 	if cmd.Use == "login" {
@@ -93,6 +109,11 @@ func preRootCmd(cmd *cobra.Command, args []string) {
 }
 
 func postRootCmd(cmd *cobra.Command, args []string) {
+	// skip reading token or login if this is a login command
+	if cmd.Use == "login" {
+		return
+	}
+
 	tokenInUse, err := client.Token()
 	if err != nil {
 		log.Fatal(err)
