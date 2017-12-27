@@ -9,7 +9,10 @@ import (
 	"github.com/zmb3/spotify"
 )
 
-var playCmdFlagType string
+var (
+	playCmdFlagType string
+	deviceNameFlag  string
+)
 
 var playCmd = &cobra.Command{
 	Use:   "play [name]",
@@ -61,6 +64,12 @@ var repeatCmd = &cobra.Command{
 	RunE:  repeat,
 }
 
+var devicesCmd = &cobra.Command{
+	Use:   "devices",
+	Short: "Show list of available devices",
+	RunE:  devices,
+}
+
 func shuffle(cmd *cobra.Command, args []string) error {
 	state, err := client.PlayerState()
 	if err != nil {
@@ -87,12 +96,15 @@ func repeat(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported repeat state %s", state.RepeatState)
 	}
 
-	return client.Repeat(repeat)
+	opt := &spotify.PlayOptions{
+		DeviceID: findDeviceByName(deviceNameFlag),
+	}
+	return client.RepeatOpt(repeat, opt)
 }
 
 func play(cmd *cobra.Command, args []string) error {
 	var (
-		opt *spotify.PlayOptions
+		opt = &spotify.PlayOptions{}
 		err error
 	)
 
@@ -108,7 +120,26 @@ func play(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	opt.DeviceID = findDeviceByName(deviceNameFlag)
+
 	return client.PlayOpt(opt)
+}
+
+func devices(cmd *cobra.Command, args []string) error {
+	devices, err := client.PlayerDevices()
+	if err != nil {
+		return err
+	}
+
+	for _, device := range devices {
+		active := ""
+		if device.Active {
+			active = "* "
+		}
+		fmt.Printf("%s%s - %s (volume %d%%)\n", active, device.Name, device.Type, device.Volume)
+	}
+
+	return nil
 }
 
 func vol(cmd *cobra.Command, args []string) error {
@@ -143,7 +174,79 @@ func vol(cmd *cobra.Command, args []string) error {
 		currVolume = 100
 	}
 
-	return client.Volume(currVolume)
+	opt := &spotify.PlayOptions{
+		DeviceID: findDeviceByName(deviceNameFlag),
+	}
+	return client.VolumeOpt(currVolume, opt)
+}
+
+func pause(cmd *cobra.Command, args []string) error {
+	opt := &spotify.PlayOptions{
+		DeviceID: findDeviceByName(deviceNameFlag),
+	}
+	return client.PauseOpt(opt)
+}
+
+func next(cmd *cobra.Command, args []string) error {
+	opt := &spotify.PlayOptions{
+		DeviceID: findDeviceByName(deviceNameFlag),
+	}
+	return client.NextOpt(opt)
+}
+
+func prev(cmd *cobra.Command, args []string) error {
+	opt := &spotify.PlayOptions{
+		DeviceID: findDeviceByName(deviceNameFlag),
+	}
+	return client.PreviousOpt(opt)
+}
+
+func status(cmd *cobra.Command, args []string) error {
+	state, err := client.PlayerState()
+	if err != nil {
+		return err
+	}
+
+	if state.Playing && state.Item != nil {
+		var artists []string
+		for _, a := range state.Item.Artists {
+			artists = append(artists, a.Name)
+		}
+
+		fmt.Printf("Spoitfy is currently playing on %s.\n", state.Device.Name)
+		fmt.Printf("Artist: %s\n", strings.Join(artists, ", "))
+		fmt.Printf("Album: %s\n", state.Item.Album.Name)
+		fmt.Printf("Track: %s\n", state.Item.Name)
+		fmt.Printf("Position: %s / %s\n", durationToStr(state.Progress), durationToStr(state.Item.Duration))
+	} else {
+		fmt.Println("Spotify is currently paused.")
+	}
+
+	return nil
+}
+
+// findDeviceByName finds the device by name.
+// If name is empty, the first Computer device ID is returned if it's available;
+// otherwise it returns the first device ID.
+func findDeviceByName(name string) *spotify.ID {
+	devices, err := client.PlayerDevices()
+	if err != nil {
+		return nil
+	}
+
+	for _, device := range devices {
+		if name != "" && device.Name == name {
+			return &device.ID
+		} else if device.Type == "Computer" {
+			return &device.ID
+		}
+	}
+
+	if len(devices) > 0 {
+		return &devices[0].ID
+	}
+
+	return nil
 }
 
 func playByID(id string) *spotify.PlayOptions {
@@ -214,40 +317,4 @@ func searchToPlay(query, t string) (*spotify.PlayOptions, error) {
 	}
 
 	return opt, nil
-}
-
-func pause(cmd *cobra.Command, args []string) error {
-	return client.Pause()
-}
-
-func next(cmd *cobra.Command, args []string) error {
-	return client.Next()
-}
-
-func prev(cmd *cobra.Command, args []string) error {
-	return client.Previous()
-}
-
-func status(cmd *cobra.Command, args []string) error {
-	state, err := client.PlayerState()
-	if err != nil {
-		return err
-	}
-
-	if state.Playing && state.Item != nil {
-		var artists []string
-		for _, a := range state.Item.Artists {
-			artists = append(artists, a.Name)
-		}
-
-		fmt.Println("Spoitfy is currently playing.")
-		fmt.Printf("Artist: %s\n", strings.Join(artists, ", "))
-		fmt.Printf("Album: %s\n", state.Item.Album.Name)
-		fmt.Printf("Track: %s\n", state.Item.Name)
-		fmt.Printf("Position: %s / %s\n", durationToStr(state.Progress), durationToStr(state.Item.Duration))
-	} else {
-		fmt.Println("Spotify is currently paused.")
-	}
-
-	return nil
 }
