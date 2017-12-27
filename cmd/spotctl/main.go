@@ -50,6 +50,7 @@ func ver(cmd *cobra.Command, args []string) {
 func main() {
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(logoutCmd)
+	rootCmd.AddCommand(devicesCmd)
 	rootCmd.AddCommand(playCmd)
 	rootCmd.AddCommand(pauseCmd)
 	rootCmd.AddCommand(nextCmd)
@@ -62,6 +63,14 @@ func main() {
 	rootCmd.AddCommand(versionCmd)
 
 	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
+	playCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	pauseCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	nextCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	prevCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	volCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	shuffleCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	repeatCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	playerCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
