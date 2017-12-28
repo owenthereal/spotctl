@@ -213,7 +213,7 @@ func status(cmd *cobra.Command, args []string) error {
 			artists = append(artists, a.Name)
 		}
 
-		fmt.Printf("Spoitfy is currently playing on %s.\n", state.Device.Name)
+		fmt.Printf("Spotify is currently playing on %s.\n", state.Device.Name)
 		fmt.Printf("Artist: %s\n", strings.Join(artists, ", "))
 		fmt.Printf("Album: %s\n", state.Item.Album.Name)
 		fmt.Printf("Track: %s\n", state.Item.Name)
