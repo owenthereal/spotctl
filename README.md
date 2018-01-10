@@ -22,7 +22,7 @@ brew install https://raw.githubusercontent.com/jingweno/spotctl/master/Formula/s
 
 You can download the latest release for your operating system [here](https://github.com/jingweno/spotctl/releases).
 
-## Manual Instllation
+## Manual Installation
 
 `spotctl` needs to connect to Spotify's API in order to control it.
 To manually build it, you first need to sign up (or into) Spotify's developer site and [create an Application](https://developer.spotify.com/my-applications/#!/applications/create).
