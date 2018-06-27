@@ -70,6 +70,44 @@ var devicesCmd = &cobra.Command{
 	RunE:  devices,
 }
 
+var getAlbumsCmd = &cobra.Command{
+    Use: "albums",
+    Short: "Show list of saved albums.",
+    RunE: getAlbums,
+}
+
+func devices(cmd *cobra.Command, args []string) error {
+	devices, err := client.PlayerDevices()
+	if err != nil {
+		return err
+	}
+
+	for _, device := range devices {
+		active := ""
+		if device.Active {
+			active = "* "
+		}
+		fmt.Printf("%s%s - %s (volume %d%%)\n", active, device.Name, device.Type, device.Volume)
+	}
+
+	return nil
+}
+
+func getAlbums(cmd *cobra.Command, args []string) error {
+    albums, err := client.CurrentUsersAlbums()
+    if err != nil {
+        return err
+    }
+
+    for _, album := range albums.Albums {
+        fmt.Printf("%s\n", album.Name)
+    }
+
+    fmt.Printf("\n")
+
+    return nil
+}
+
 func shuffle(cmd *cobra.Command, args []string) error {
 	state, err := client.PlayerState()
 	if err != nil {
@@ -123,23 +161,6 @@ func play(cmd *cobra.Command, args []string) error {
 	opt.DeviceID = findDeviceByName(deviceNameFlag)
 
 	return client.PlayOpt(opt)
-}
-
-func devices(cmd *cobra.Command, args []string) error {
-	devices, err := client.PlayerDevices()
-	if err != nil {
-		return err
-	}
-
-	for _, device := range devices {
-		active := ""
-		if device.Active {
-			active = "* "
-		}
-		fmt.Printf("%s%s - %s (volume %d%%)\n", active, device.Name, device.Type, device.Volume)
-	}
-
-	return nil
 }
 
 func vol(cmd *cobra.Command, args []string) error {
