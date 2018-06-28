@@ -70,6 +70,12 @@ var devicesCmd = &cobra.Command{
 	RunE:  devices,
 }
 
+var setDeviceCmd = &cobra.Command{
+	Use:   "setdevice [name]",
+	Short: "Set playback device",
+	RunE:  setDevice,
+}
+
 var getAlbumsCmd = &cobra.Command{
     Use: "albums",
     Short: "Show list of saved albums.",
@@ -100,6 +106,31 @@ func devices(cmd *cobra.Command, args []string) error {
 			active = "* "
 		}
 		fmt.Printf("%s%s - %s (volume %d%%)\n", active, device.Name, device.Type, device.Volume)
+	}
+
+	return nil
+}
+
+func setDevice(cmd *cobra.Command, args []string) error {
+    if len(args) < 1 {
+        return nil
+    }
+	devices, err := client.PlayerDevices()
+	if err != nil {
+		return err
+	}
+    var wanted string
+    wanted = strings.Join(args, " ")
+	for _, device := range devices {
+		if wanted == device.Name {
+            fmt.Printf ("Transfering playback to \"%s\"\n", device.Name);
+            err = client.TransferPlayback(device.ID, true)
+            if err != nil {
+                return err
+            } else {
+                return nil
+            }
+		}
 	}
 
 	return nil

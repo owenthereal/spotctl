@@ -64,6 +64,7 @@ func main() {
     rootCmd.AddCommand(getAlbumsCmd)
     rootCmd.AddCommand(getSongsCmd)
     rootCmd.AddCommand(getArtistsCmd)
+    rootCmd.AddCommand(setDeviceCmd)
 
 	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
 	playCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
