@@ -94,7 +94,24 @@ func devices(cmd *cobra.Command, args []string) error {
 }
 
 func getAlbums(cmd *cobra.Command, args []string) error {
-    albums, err := client.CurrentUsersAlbums()
+    limit := int(50)
+    start := int(0)
+
+    if len(args) > 0 {
+        _start, err := strconv.Atoi(args[0])
+        if err != nil {
+            return err
+        }
+        start = int(_start)
+    }
+
+    var opt *spotify.Options
+    opt = &spotify.Options{
+        Limit: &limit,
+        Offset: &start,
+    }
+
+    albums, err := client.CurrentUsersAlbumsOpt(opt)
     if err != nil {
         return err
     }
@@ -102,8 +119,6 @@ func getAlbums(cmd *cobra.Command, args []string) error {
     for _, album := range albums.Albums {
         fmt.Printf("%s\n", album.Name)
     }
-
-    fmt.Printf("\n")
 
     return nil
 }
