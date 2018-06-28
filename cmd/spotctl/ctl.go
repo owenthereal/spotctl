@@ -76,6 +76,12 @@ var getAlbumsCmd = &cobra.Command{
     RunE: getAlbums,
 }
 
+var getSongsCmd = &cobra.Command{
+    Use: "tracks",
+    Short: "Show list of saved tracks.",
+    RunE: getSongs,
+}
+
 func devices(cmd *cobra.Command, args []string) error {
 	devices, err := client.PlayerDevices()
 	if err != nil {
@@ -118,6 +124,36 @@ func getAlbums(cmd *cobra.Command, args []string) error {
 
     for _, album := range albums.Albums {
         fmt.Printf("%s\n", album.Name)
+    }
+
+    return nil
+}
+
+func getSongs(cmd *cobra.Command, args []string) error {
+    limit := int(50)
+    start := int(0)
+
+    if len(args) > 0 {
+        _start, err := strconv.Atoi(args[0])
+        if err != nil {
+            return err
+        }
+        start = int(_start)
+    }
+
+    var opt *spotify.Options
+    opt = &spotify.Options{
+        Limit: &limit,
+        Offset: &start,
+    }
+
+    songs, err := client.CurrentUsersTracksOpt(opt)
+    if err != nil {
+        return err
+    }
+
+    for _, song := range songs.Tracks {
+        fmt.Printf("%s\n", song.Name)
     }
 
     return nil
