@@ -108,83 +108,69 @@ func devices(cmd *cobra.Command, args []string) error {
 func getAlbums(cmd *cobra.Command, args []string) error {
     limit := int(50)
     start := int(0)
-
-    if len(args) > 0 {
-        _start, err := strconv.Atoi(args[0])
-        if err != nil {
-            return err
-        }
-        start = int(_start)
-    }
-
     var opt *spotify.Options
     opt = &spotify.Options{
         Limit: &limit,
         Offset: &start,
     }
-
-    albums, err := client.CurrentUsersAlbumsOpt(opt)
-    if err != nil {
-        return err
+    for {
+        albums, err := client.CurrentUsersAlbumsOpt(opt)
+        if err != nil {
+            return err
+        }
+        for _, album := range albums.Albums {
+            fmt.Printf("%s\n", album.Name)
+        }
+        if len(albums.Albums) < limit {
+            return nil
+        }
+        start += limit
     }
-
-    for _, album := range albums.Albums {
-        fmt.Printf("%s\n", album.Name)
-    }
-
     return nil
 }
 
 func getSongs(cmd *cobra.Command, args []string) error {
     limit := int(50)
     start := int(0)
-
-    if len(args) > 0 {
-        _start, err := strconv.Atoi(args[0])
-        if err != nil {
-            return err
-        }
-        start = int(_start)
-    }
-
     var opt *spotify.Options
     opt = &spotify.Options{
         Limit: &limit,
         Offset: &start,
     }
-
-    songs, err := client.CurrentUsersTracksOpt(opt)
-    if err != nil {
-        return err
+    for {
+        songs, err := client.CurrentUsersTracksOpt(opt)
+        if err != nil {
+            return err
+        }
+        for _, song := range songs.Tracks {
+            fmt.Printf("%s\n", song.Name)
+        }
+        if len(songs.Tracks) < limit {
+            return nil
+        }
+        start += limit
     }
-
-    for _, song := range songs.Tracks {
-        fmt.Printf("%s\n", song.Name)
-    }
-
     return nil
 }
 
 func getArtists(cmd *cobra.Command, args []string) error {
     start := ""
-
-    if len(args) > 0 {
-        start = args[0]
+    for {
+        artists, err := client.CurrentUsersFollowedArtistsOpt(50, start)
+        if err != nil {
+            return err
+        }
+        for _, artist := range artists.Artists {
+            fmt.Printf("%s\n", artist.Name)
+        }
+        if len(artists.Artists) == 50 {
+            start = string(artists.Artists[49].URI)
+            start = strings.Split(start,":")[2]
+            fmt.Printf("%s\n", start)
+        } else {
+            return nil
+        }
     }
-
-    artists, err := client.CurrentUsersFollowedArtistsOpt(50, start)
-    if err != nil {
-        return err
-    }
-
-    for _, artist := range artists.Artists {
-        fmt.Printf("%s\n", artist.Name)
-    }
-
-    if len(artists.Artists) == 50 {
-        fmt.Printf("%s\n", artists.Artists[49].URI)
-    }
-
     return nil
 }
 
