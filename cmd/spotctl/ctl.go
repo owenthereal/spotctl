@@ -82,6 +82,12 @@ var getSongsCmd = &cobra.Command{
     RunE: getSongs,
 }
 
+var getArtistsCmd = &cobra.Command{
+    Use: "artists",
+    Short: "Show list of saved artists.",
+    RunE: getArtists,
+}
+
 func devices(cmd *cobra.Command, args []string) error {
 	devices, err := client.PlayerDevices()
 	if err != nil {
@@ -154,6 +160,29 @@ func getSongs(cmd *cobra.Command, args []string) error {
 
     for _, song := range songs.Tracks {
         fmt.Printf("%s\n", song.Name)
+    }
+
+    return nil
+}
+
+func getArtists(cmd *cobra.Command, args []string) error {
+    start := ""
+
+    if len(args) > 0 {
+        start = args[0]
+    }
+
+    artists, err := client.CurrentUsersFollowedArtistsOpt(50, start)
+    if err != nil {
+        return err
+    }
+
+    for _, artist := range artists.Artists {
+        fmt.Printf("%s\n", artist.Name)
+    }
+
+    if len(artists.Artists) == 50 {
+        fmt.Printf("%s\n", artists.Artists[49].URI)
     }
 
     return nil
