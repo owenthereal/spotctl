@@ -61,16 +61,20 @@ func main() {
 	rootCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(playerCmd)
 	rootCmd.AddCommand(versionCmd)
+    rootCmd.AddCommand(getAlbumsCmd)
+    rootCmd.AddCommand(getSongsCmd)
+    rootCmd.AddCommand(getArtistsCmd)
+    rootCmd.AddCommand(setDeviceCmd)
 
 	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
-	playCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	pauseCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	nextCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	prevCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	volCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	shuffleCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	repeatCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	playerCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//playCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//pauseCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//nextCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//prevCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//volCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//shuffleCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//repeatCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//playerCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
@@ -89,6 +93,9 @@ func preRootCmd(cmd *cobra.Command, args []string) {
 		spotify.ScopeUserReadCurrentlyPlaying,
 		spotify.ScopeUserReadPlaybackState,
 		spotify.ScopeUserModifyPlaybackState,
+        spotify.ScopeUserLibraryRead,
+        spotify.ScopeUserReadPrivate,
+        spotify.ScopeUserFollowRead,
 	)
 	auth.SetAuthInfo(spotifyClientID, spotifyClientSecret)
 
