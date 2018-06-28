@@ -70,6 +70,141 @@ var devicesCmd = &cobra.Command{
 	RunE:  devices,
 }
 
+var setDeviceCmd = &cobra.Command{
+	Use:   "setdevice [name]",
+	Short: "Set playback device",
+	RunE:  setDevice,
+}
+
+var getAlbumsCmd = &cobra.Command{
+    Use: "albums",
+    Short: "Show list of saved albums.",
+    RunE: getAlbums,
+}
+
+var getSongsCmd = &cobra.Command{
+    Use: "tracks",
+    Short: "Show list of saved tracks.",
+    RunE: getSongs,
+}
+
+var getArtistsCmd = &cobra.Command{
+    Use: "artists",
+    Short: "Show list of saved artists.",
+    RunE: getArtists,
+}
+
+func devices(cmd *cobra.Command, args []string) error {
+	devices, err := client.PlayerDevices()
+	if err != nil {
+		return err
+	}
+
+	for _, device := range devices {
+		active := ""
+		if device.Active {
+			active = "* "
+		}
+		fmt.Printf("%s%s - %s (volume %d%%)\n", active, device.Name, device.Type, device.Volume)
+	}
+
+	return nil
+}
+
+func setDevice(cmd *cobra.Command, args []string) error {
+    if len(args) < 1 {
+        return nil
+    }
+	devices, err := client.PlayerDevices()
+	if err != nil {
+		return err
+	}
+    var wanted string
+    wanted = strings.Join(args, " ")
+	for _, device := range devices {
+		if wanted == device.Name {
+            fmt.Printf ("Transfering playback to \"%s\"\n", device.Name);
+            err = client.TransferPlayback(device.ID, true)
+            if err != nil {
+                return err
+            } else {
+                return nil
+            }
+		}
+	}
+
+	return nil
+}
+
+func getAlbums(cmd *cobra.Command, args []string) error {
+    limit := int(50)
+    start := int(0)
+    var opt *spotify.Options
+    opt = &spotify.Options{
+        Limit: &limit,
+        Offset: &start,
+    }
+    for {
+        albums, err := client.CurrentUsersAlbumsOpt(opt)
+        if err != nil {
+            return err
+        }
+        for _, album := range albums.Albums {
+            fmt.Printf("%s\n", album.Name)
+        }
+        if len(albums.Albums) < limit {
+            return nil
+        }
+        start += limit
+    }
+    return nil
+}
+
+func getSongs(cmd *cobra.Command, args []string) error {
+    limit := int(50)
+    start := int(0)
+    var opt *spotify.Options
+    opt = &spotify.Options{
+        Limit: &limit,
+        Offset: &start,
+    }
+    for {
+        songs, err := client.CurrentUsersTracksOpt(opt)
+        if err != nil {
+            return err
+        }
+        for _, song := range songs.Tracks {
+            fmt.Printf("%s\n", song.Name)
+        }
+        if len(songs.Tracks) < limit {
+            return nil
+        }
+        start += limit
+    }
+    return nil
+}
+
+func getArtists(cmd *cobra.Command, args []string) error {
+    start := ""
+    for {
+        artists, err := client.CurrentUsersFollowedArtistsOpt(50, start)
+        if err != nil {
+            return err
+        }
+        for _, artist := range artists.Artists {
+            fmt.Printf("%s\n", artist.Name)
+        }
+        if len(artists.Artists) == 50 {
+            start = string(artists.Artists[49].URI)
+            start = strings.Split(start,":")[2]
+            fmt.Printf("%s\n", start)
+        } else {
+            return nil
+        }
+    }
+    return nil
+}
+
 func shuffle(cmd *cobra.Command, args []string) error {
 	state, err := client.PlayerState()
 	if err != nil {
@@ -123,23 +258,6 @@ func play(cmd *cobra.Command, args []string) error {
 	opt.DeviceID = findDeviceByName(deviceNameFlag)
 
 	return client.PlayOpt(opt)
-}
-
-func devices(cmd *cobra.Command, args []string) error {
-	devices, err := client.PlayerDevices()
-	if err != nil {
-		return err
-	}
-
-	for _, device := range devices {
-		active := ""
-		if device.Active {
-			active = "* "
-		}
-		fmt.Printf("%s%s - %s (volume %d%%)\n", active, device.Name, device.Type, device.Volume)
-	}
-
-	return nil
 }
 
 func vol(cmd *cobra.Command, args []string) error {

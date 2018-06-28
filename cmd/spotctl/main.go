@@ -61,6 +61,10 @@ func main() {
 	rootCmd.AddCommand(statusCmd)
 	rootCmd.AddCommand(playerCmd)
 	rootCmd.AddCommand(versionCmd)
+    rootCmd.AddCommand(getAlbumsCmd)
+    rootCmd.AddCommand(getSongsCmd)
+    rootCmd.AddCommand(getArtistsCmd)
+    rootCmd.AddCommand(setDeviceCmd)
 
 	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
 	playCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
@@ -89,6 +93,9 @@ func preRootCmd(cmd *cobra.Command, args []string) {
 		spotify.ScopeUserReadCurrentlyPlaying,
 		spotify.ScopeUserReadPlaybackState,
 		spotify.ScopeUserModifyPlaybackState,
+        spotify.ScopeUserLibraryRead,
+        spotify.ScopeUserReadPrivate,
+        spotify.ScopeUserFollowRead,
 	)
 	auth.SetAuthInfo(spotifyClientID, spotifyClientSecret)
 
