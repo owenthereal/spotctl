@@ -67,14 +67,14 @@ func main() {
     rootCmd.AddCommand(setDeviceCmd)
 
 	playCmd.PersistentFlags().StringVarP(&playCmdFlagType, "type", "t", "track", "the type of [name] to play: track, album, artist or playlist.")
-	playCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	pauseCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	nextCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	prevCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	volCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	shuffleCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	repeatCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
-	playerCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//playCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//pauseCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//nextCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//prevCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//volCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//shuffleCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//repeatCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
+	//playerCmd.PersistentFlags().StringVarP(&deviceNameFlag, "device", "d", "", "the name of device")
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
