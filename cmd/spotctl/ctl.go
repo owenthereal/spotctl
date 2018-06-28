@@ -232,7 +232,7 @@ func repeat(cmd *cobra.Command, args []string) error {
 	}
 
 	opt := &spotify.PlayOptions{
-		DeviceID: findDeviceByName(deviceNameFlag),
+	//	DeviceID: findDeviceByName(deviceNameFlag),
 	}
 	return client.RepeatOpt(repeat, opt)
 }
@@ -255,7 +255,7 @@ func play(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	opt.DeviceID = findDeviceByName(deviceNameFlag)
+	//opt.DeviceID = findDeviceByName(deviceNameFlag)
 
 	return client.PlayOpt(opt)
 }
@@ -293,28 +293,28 @@ func vol(cmd *cobra.Command, args []string) error {
 	}
 
 	opt := &spotify.PlayOptions{
-		DeviceID: findDeviceByName(deviceNameFlag),
+		//DeviceID: findDeviceByName(deviceNameFlag),
 	}
 	return client.VolumeOpt(currVolume, opt)
 }
 
 func pause(cmd *cobra.Command, args []string) error {
 	opt := &spotify.PlayOptions{
-		DeviceID: findDeviceByName(deviceNameFlag),
+		//DeviceID: findDeviceByName(deviceNameFlag),
 	}
 	return client.PauseOpt(opt)
 }
 
 func next(cmd *cobra.Command, args []string) error {
 	opt := &spotify.PlayOptions{
-		DeviceID: findDeviceByName(deviceNameFlag),
+		//DeviceID: findDeviceByName(deviceNameFlag),
 	}
 	return client.NextOpt(opt)
 }
 
 func prev(cmd *cobra.Command, args []string) error {
 	opt := &spotify.PlayOptions{
-		DeviceID: findDeviceByName(deviceNameFlag),
+		//DeviceID: findDeviceByName(deviceNameFlag),
 	}
 	return client.PreviousOpt(opt)
 }
